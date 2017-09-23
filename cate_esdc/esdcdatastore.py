@@ -1,12 +1,32 @@
+import os.path
 import warnings
 from typing import Optional, Any, Sequence
 
 import cablab
+import xarray as xr
 from cate.conf import conf
 from cate.core import DataStore, DataSource
 from cate.core.ds import DATA_STORE_REGISTRY
+from cate.core.op import op, op_input
 from cate.core.types import TimeRangeLike, PolygonLike, VarNamesLike, TimeRange
 from cate.util import Monitor, OrderedDict
+
+
+@op(version='1.0')
+@op_input('cube_config_file',
+          file_open_mode='r',
+          file_filters=[dict(name='ESDC Cube Configuration', extensions=['config'])])
+def read_esdc(cube_config_file: str) -> xr.Dataset:
+    """
+    Read an Earth System Data Cube in the local file system.
+
+    :param cube_config_file: The ESDC configuration file contained within
+           a data cube base directory.
+    :return: A dataset comprising all the data cube variables.
+    """
+    import cablab
+    cube_base_dir = os.path.dirname(cube_config_file)
+    return cablab.Cube.open(cube_base_dir).data.dataset()
 
 
 class EsdcDataSource(DataSource):
@@ -32,11 +52,13 @@ class EsdcDataSource(DataSource):
                 metadata[key] = str(value)
         if self._title:
             metadata['title'] = self._title
+        # TODO (forman): get variables from cube, must be list of dict(name=, unit=)
+        metadata['variables'] = []
         return metadata
 
     def temporal_coverage(self, monitor: Monitor = Monitor.NONE) -> Optional[TimeRange]:
-        start_time = self._cube.conf.start_time
-        end_time = self._cube.conf.end_time
+        start_time = self._cube.config.start_time
+        end_time = self._cube.config.end_time
         if start_time and end_time:
             try:
                 return TimeRangeLike.convert("{},{}".format(start_time, end_time))
