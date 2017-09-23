@@ -5,7 +5,7 @@ import cablab
 from cate.conf import conf
 from cate.core import DataStore, DataSource
 from cate.core.ds import DATA_STORE_REGISTRY
-from cate.core.types import TimeRangeLike, PolygonLike, VarNamesLike
+from cate.core.types import TimeRangeLike, PolygonLike, VarNamesLike, TimeRange
 from cate.util import Monitor, OrderedDict
 
 
@@ -34,6 +34,16 @@ class EsdcDataSource(DataSource):
             metadata['title'] = self._title
         return metadata
 
+    def temporal_coverage(self, monitor: Monitor = Monitor.NONE) -> Optional[TimeRange]:
+        start_time = self._cube.conf.start_time
+        end_time = self._cube.conf.end_time
+        if start_time and end_time:
+            try:
+                return TimeRangeLike.convert("{},{}".format(start_time, end_time))
+            except ValueError:
+                pass
+        return None
+
     def open_dataset(self,
                      time_range: TimeRangeLike.TYPE = None,
                      region: PolygonLike.TYPE = None,
@@ -43,7 +53,7 @@ class EsdcDataSource(DataSource):
             raise ValueError("ESDCdata source cannot have constraints")
         return self._cube.data.dataset()
 
-    def make_local(self, *args, **kwargs) -> Optional['DataSource']:
+    def make_local(self, *args, **kwargs) -> Optional[DataSource]:
         warnings.warn('EsdcDataSource cannot be made local')
         return None
 
@@ -74,7 +84,8 @@ class EsdcDataStore(DataStore):
               query_expr: str = None,
               monitor: Monitor = Monitor.NONE) -> Sequence[DataSource]:
         if id:
-            return self._data_sources.get(id)
+            data_source = self._data_sources.get(id)
+            return [data_source] if data_source else None
         # TODO (forman): use query_expr
         return list(self._data_sources.values())
 
