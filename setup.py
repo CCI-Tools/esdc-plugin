@@ -44,5 +44,5 @@ setup(
             'cate_esdc = cate_esdc.cate_init',
         ],
     },
-    install_requires=requirements,
+    #install_requires=requirements,
 )
