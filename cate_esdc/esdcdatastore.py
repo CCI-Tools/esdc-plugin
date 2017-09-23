@@ -64,7 +64,7 @@ class EsdcDataStore(DataStore):
             try:
                 cube = cablab.Cube.open(local_path)
             except Exception as e:
-                warnings.warn('Failed to open ESDC from %s: %s' % (local_path, e))
+                warnings.warn('ESDC data source "%s" registered: %s' % (ds_id, e))
                 pass
             if cube:
                 self._data_sources[ds_id] = EsdcDataSource(self, ds_id, title, cube)

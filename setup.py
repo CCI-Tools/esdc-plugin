@@ -41,7 +41,7 @@ setup(
     packages=packages,
     entry_points={
         'cate_plugins': [
-            'cate_esdc = cate_esdc.cate_init',
+            'cate_esdc = cate_esdc:cate_init',
         ],
     },
     #install_requires=requirements,
