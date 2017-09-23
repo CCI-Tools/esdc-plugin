@@ -6,7 +6,7 @@ Cate plugin adding a data store for Earth System Data Cube (ESDC) instances
 ## Installation
 
 
-1) Create a Cate environment by using the Cate installer call **Cate CLI** to open a shell
+Create a Cate environment by using the Cate installer call **Cate CLI** to open a shell
 with activated Python environment.
 Alternatively, create the environment from [cate](https://github.com/CCI-Tools/cate-core) sources:
 
@@ -17,21 +17,21 @@ Alternatively, create the environment from [cate](https://github.com/CCI-Tools/c
     python setup.py develop
 
 
-2) Install [cablab](https://github.com/CAB-LAB/cablab-core):
+Install [cablab](https://github.com/CAB-LAB/cablab-core):
 
     cd ..
     git clone https://github.com/CAB-LAB/cablab-core.git
     cd cablab-core
     python setup.py develop
 
-3) Install [esdc-plugin](https://github.com/CCI-Tools/esdc-plugin)
+Install [esdc-plugin](https://github.com/CCI-Tools/esdc-plugin)
 
     cd ..
     git clone https://github.com/CCI-Tools/esdc-plugin.git
     cd esdc-plugin
     python setup.py develop
 
-4) Test installation
+Test installation of plugin
 
     cate -h
     python -c "import cate"
